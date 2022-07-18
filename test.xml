@@ -1,6 +1,6 @@
 <Widget name="test">
     <Container bg="blue">
         <Padding all="8"/>
-        <Text size="20">some text</Text>
+        <Text size="20">{str: text}</Text>
     </Container>
 </Widget>

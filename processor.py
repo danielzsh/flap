@@ -1,6 +1,22 @@
 import xml.etree.ElementTree as ET
 import textwrap
 import sys
+import re
+kwds = ['src']
+def getparams(xml):
+    pattern = re.compile('\{([^\{\}]+)\}')
+    params = []
+    if xml.text is not None:
+        params += pattern.findall(xml.text)
+    for child in xml:
+        params += getparams(child)
+    return params
+def removeparams(text):
+    pattern = '\{([^\{\}]+)\}'
+    def getname(str):
+        return str.group(1).split(":")[1].strip()
+    pat = re.compile(pattern)
+    return re.sub(pattern, getname, text)
 def processContainer(xml):
     res = ""
     res += "return Container(\n"
@@ -36,13 +52,24 @@ def processText(xml):
     for style in xml.attrib:
         if style == 'size':
             styles.append(f"fontSize: {xml.attrib['size']}")
-    return f"Text('{xml.text}', style: TextStyle({','.join(styles)}))"
+    return f"Text({removeparams(xml.text)}, style: TextStyle({','.join(styles)}))"
 
 def processWidget(xml):
     if len(xml) > 1:
         print("Warning: only first child of 'Widget' will be processed.")
+    params = getparams(xml)
+    formattedparams = [""]
+    paramdecls = []
+    for param in params:
+        spl = param.split(':')
+        name = spl[1].strip()
+        formattedparams.append(f"required this.{name}")
+        if spl[0].strip() == 'str':
+            paramdecls.append(f"final String {name};")
+    declconcat = "\n\t\t".join(paramdecls)
     return f"""class {xml.attrib['name']} extends StatelessWidget {{
-    {xml.attrib['name']}({{Key? key}}) : super(key: key);
+    {xml.attrib['name']}({{Key? key{", ".join(formattedparams)}}}) : super(key: key);
+    {declconcat}
     @override
     Widget build(BuildContext context) {{
 {textwrap.indent(process_xml(xml[0]), '        ')}
@@ -103,7 +130,12 @@ class _MyHomePageState extends State<MyHomePage> {{
 
 def process_xml(xml):
     if f"process{xml.tag}" not in globals():
-        return f"{xml.tag}()"
+        params = []
+        for param in xml.attrib:
+            if param in kwds:
+                continue
+            params.append(f"{param}: '{xml.attrib[param]}'")
+        return f"{xml.tag}({', '.join(params)})"
     return globals()[f"process{xml.tag}"](xml)
 
 def parse_file(filename):
@@ -112,7 +144,8 @@ def parse_file(filename):
     fo = open(f"src/lib/{filename}.dart", "w")
     fo.write("import 'package:flutter/material.dart';\n")
     fo.write(process_xml(root))
-
+tree = ET.parse("test.xml").getroot()
+print(getparams(tree))
 if len(sys.argv) == 1:
     parse_file("main")
 else: 
