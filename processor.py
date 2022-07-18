@@ -48,6 +48,9 @@ def processText(xml):
     for style in xml.attrib:
         if style == 'size':
             styles.append(f"fontSize: {xml.attrib['size']}")
+        elif style == 'color':
+            color = getname(xml.attrib['color']) or f"Colors.{xml.attrib['color']}"
+            styles.append(f"color: {color}")
     return f"Text('{removeparams(xml.text)}', style: TextStyle({','.join(styles)}))"
 
 def processContainer(xml):
@@ -83,7 +86,7 @@ f"""Expanded(
 def processColumn(xml):
     children = []
     for child in xml:
-        if child.tag in styleComponents: continue
+        if child.tag in styleComponents: continue # add support for styles later
         children.append(process_xml(child))
     fchildren = textwrap.indent(",\n".join(children), "\t\t")
     return \

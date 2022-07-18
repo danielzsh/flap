@@ -1,3 +1,3 @@
 <Main title="my app">
-    <test src="test" text="some text" bgcolor="color: blue"/>
+    <test src="test" text="some text" bgcolor="color: black" textcolor="color: white"/>
 </Main>
