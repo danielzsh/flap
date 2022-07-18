@@ -1,6 +1,6 @@
-<Widget name="widget">
+<Widget name="test">
     <Container>
-        <margin all="8"/>
+        <Margin all="8"/>
         <Text>some text</Text>
     </Container>
 </Widget>
