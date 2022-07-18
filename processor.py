@@ -8,26 +8,21 @@ def getparams(xml):
     params = []
     if xml.text is not None:
         params += pattern.findall(xml.text)
+    for _, v in xml.attrib.items():
+        params += pattern.findall(v)
     for child in xml:
         params += getparams(child)
     return params
+
 def removeparams(text):
     pattern = '\{([^\{\}]+)\}'
     def getname(str):
         return f"${str.group(1).split(':')[1].strip()}"
-    pat = re.compile(pattern)
     return re.sub(pattern, getname, text)
-def processContainer(xml):
-    res = ""
-    res += "return Container(\n"
-    for style in xml.attrib:
-        if style == 'bg':
-            res += f"\tcolor: Colors.{xml.attrib['bg']},\n"
-    for prop in xml[:-1]:
-        res += "\t" + process_xml(prop) + ",\n"
-    res += "\tchild: " + process_xml(xml[-1]) + ",\n"
-    res += ");"
-    return res
+
+def getname(str):
+    if str[0] != '{' or str[-1] != '}': return None
+    else: return str[1:-1].split(':')[1].strip()
 
 def processMargin(xml):
     res = ""
@@ -54,6 +49,26 @@ def processText(xml):
             styles.append(f"fontSize: {xml.attrib['size']}")
     return f"Text('{removeparams(xml.text)}', style: TextStyle({','.join(styles)}))"
 
+def processContainer(xml):
+    res = ""
+    res += "Container(\n"
+    for style in xml.attrib:
+        if style == 'bg':
+            bg = getname(xml.attrib['bg']) or f"Colors.{xml.attrib['bg']}"
+            res += f"\tcolor: {bg},\n"
+    for prop in xml[:-1]:
+        res += "\t" + process_xml(prop) + ",\n"
+    res += "\tchild: " + process_xml(xml[-1]) + ",\n"
+    res += ")"
+    return res
+
+def processCenter(xml):
+    indentedchild = process_xml(xml[0]).replace('\n', '\n\t\t')
+    return \
+f"""Center(
+    child: {indentedchild},
+)"""
+
 def processWidget(xml):
     if len(xml) > 1:
         print("Warning: only first child of 'Widget' will be processed.")
@@ -66,13 +81,16 @@ def processWidget(xml):
         formattedparams.append(f"required this.{name}")
         if spl[0].strip() == 'str':
             paramdecls.append(f"final String {name};")
-    declconcat = "\n\t\t".join(paramdecls)
+        elif spl[0].strip() == 'color':
+            paramdecls.append(f"final Color {name};")
+    declconcat = "\n\t".join(paramdecls)
+    indentedchild = process_xml(xml[0]).replace('\n', '\n\t\t')
     return f"""class {xml.attrib['name']} extends StatelessWidget {{
     {xml.attrib['name']}({{Key? key{", ".join(formattedparams)}}}) : super(key: key);
     {declconcat}
     @override
     Widget build(BuildContext context) {{
-{textwrap.indent(process_xml(xml[0]), '        ')}
+        return {indentedchild};
     }}
 }}"""
 
@@ -87,7 +105,8 @@ def processMain(xml):
             imports += f"import '{child.attrib['src']}.dart';\n"
             processedimports.append(child.attrib['src'])
     body = process_xml(xml[-1])
-    return imports + f"""
+    return imports + \
+f"""
 void main() {{
   runApp(const MyApp());
 }}
@@ -134,7 +153,9 @@ def process_xml(xml):
         for param in xml.attrib:
             if param in kwds:
                 continue
-            params.append(f"{param}: '{xml.attrib[param]}'")
+            if xml.attrib[param].split(':')[0].strip() == 'color':
+                params.append(f"{param}: Colors.{xml.attrib[param].split(':')[1].strip()}")
+            else: params.append(f"{param}: '{xml.attrib[param]}'")
         return f"{xml.tag}({', '.join(params)})"
     return globals()[f"process{xml.tag}"](xml)
 

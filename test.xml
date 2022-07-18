@@ -1,6 +1,8 @@
 <Widget name="test">
-    <Container bg="blue">
-        <Padding all="8"/>
-        <Text size="20">{str: text} and more</Text>
-    </Container>
+    <Center>
+        <Container bg="{color: bgcolor}">
+            <Padding all="8"/>
+            <Text size="20">{str: text} and more</Text>
+        </Container>
+    </Center>
 </Widget>
