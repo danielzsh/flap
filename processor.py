@@ -145,7 +145,7 @@ class MyApp extends StatelessWidget {{
     return MaterialApp(
       title: '{xml.attrib.get('title') or 'Flap app'}',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.{xml.attrib.get('swatch') or 'blue'},
       ),
       home: const MyHomePage(title: '{xml.attrib.get('title') or 'Flap app'}'),
     );
