@@ -1,0 +1,6 @@
+<Widget name="widget">
+    <Container>
+        <margin all="8"/>
+        <Text>some text</Text>
+    </Container>
+</Widget>
