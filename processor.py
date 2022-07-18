@@ -14,7 +14,7 @@ def getparams(xml):
 def removeparams(text):
     pattern = '\{([^\{\}]+)\}'
     def getname(str):
-        return str.group(1).split(":")[1].strip()
+        return f"${str.group(1).split(':')[1].strip()}"
     pat = re.compile(pattern)
     return re.sub(pattern, getname, text)
 def processContainer(xml):
@@ -52,7 +52,7 @@ def processText(xml):
     for style in xml.attrib:
         if style == 'size':
             styles.append(f"fontSize: {xml.attrib['size']}")
-    return f"Text({removeparams(xml.text)}, style: TextStyle({','.join(styles)}))"
+    return f"Text('{removeparams(xml.text)}', style: TextStyle({','.join(styles)}))"
 
 def processWidget(xml):
     if len(xml) > 1:
@@ -144,8 +144,6 @@ def parse_file(filename):
     fo = open(f"src/lib/{filename}.dart", "w")
     fo.write("import 'package:flutter/material.dart';\n")
     fo.write(process_xml(root))
-tree = ET.parse("test.xml").getroot()
-print(getparams(tree))
 if len(sys.argv) == 1:
     parse_file("main")
 else: 
