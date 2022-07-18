@@ -26,7 +26,7 @@ Used to create a reusable widget:
 ```
 Text in brackets specifies parameters in the form `{type: name}`, and the widget can be used like so:
 ```xml
-<test src="TestWidget" text="some text" bgcolor="color: blue"/>
+<Test src="TestWidget" text="some text" bgcolor="color: blue"/>
 ```
 Note that any parameter type other than `str` must be specified. If you use the widget multiple times, specifying `src` again is optional.
 

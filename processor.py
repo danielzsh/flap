@@ -1,7 +1,9 @@
 import xml.etree.ElementTree as ET
 import sys
 import re
+import textwrap
 kwds = ['src']
+styleComponents = ['Padding', 'Margin']
 def getparams(xml):
     pattern = re.compile('\{([^\{\}]+)\}')
     params = []
@@ -55,6 +57,8 @@ def processContainer(xml):
         if style == 'bg':
             bg = getname(xml.attrib['bg']) or f"Colors.{xml.attrib['bg']}"
             res += f"\tcolor: {bg},\n"
+        if style == 'width':
+            res += f"\twidth: {xml.attrib['width']},\n"
     for prop in xml[:-1]:
         res += "\t" + process_xml(prop) + ",\n"
     res += "\tchild: " + process_xml(xml[-1]) + ",\n"
@@ -74,6 +78,19 @@ def processExpanded(xml):
     return \
 f"""Expanded(
     child: {indentedchild},
+)"""
+
+def processColumn(xml):
+    children = []
+    for child in xml:
+        if child.tag in styleComponents: continue
+        children.append(process_xml(child))
+    fchildren = textwrap.indent(",\n".join(children), "\t\t")
+    return \
+f"""Column(
+    children: [
+{fchildren}
+    ]
 )"""
 
 def processWidget(xml):
