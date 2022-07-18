@@ -1,5 +1,4 @@
 import xml.etree.ElementTree as ET
-import textwrap
 import sys
 import re
 kwds = ['src']
@@ -66,6 +65,14 @@ def processCenter(xml):
     indentedchild = process_xml(xml[0]).replace('\n', '\n\t\t')
     return \
 f"""Center(
+    child: {indentedchild},
+)"""
+
+
+def processExpanded(xml):
+    indentedchild = process_xml(xml[0]).replace('\n', '\n\t\t')
+    return \
+f"""Expanded(
     child: {indentedchild},
 )"""
 
