@@ -1,6 +1,6 @@
 <Widget name="test">
-    <Container>
-        <Margin all="8"/>
-        <Text>some text</Text>
+    <Container bg="blue">
+        <Padding all="8"/>
+        <Text size="20">some text</Text>
     </Container>
 </Widget>

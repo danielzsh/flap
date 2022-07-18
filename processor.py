@@ -4,6 +4,9 @@ import sys
 def processContainer(xml):
     res = ""
     res += "return Container(\n"
+    for style in xml.attrib:
+        if style == 'bg':
+            res += f"\tcolor: Colors.{xml.attrib['bg']},\n"
     for prop in xml[:-1]:
         res += "\t" + process_xml(prop) + ",\n"
     res += "\tchild: " + process_xml(xml[-1]) + ",\n"
@@ -15,10 +18,25 @@ def processMargin(xml):
     res += "margin: "
     if "all" in xml.attrib:
         res += f"EdgeInsets.all({xml.attrib['all']})"
+    else:
+        raise Exception("margin tag must contain one of the following: 'left', 'right', 'top', 'bottom', 'horizontal', 'vertical', 'all'")
+    return res
+
+def processPadding(xml):
+    res = ""
+    res += "padding: "
+    if "all" in xml.attrib:
+        res += f"EdgeInsets.all({xml.attrib['all']})"
+    else:
+        raise Exception("padding tag must contain one of the following: 'left', 'right', 'top', 'bottom', 'horizontal', 'vertical', 'all'")
     return res
 
 def processText(xml):
-    return f"Text('{xml.text}')"
+    styles = []
+    for style in xml.attrib:
+        if style == 'size':
+            styles.append(f"fontSize: {xml.attrib['size']}")
+    return f"Text('{xml.text}', style: TextStyle({','.join(styles)}))"
 
 def processWidget(xml):
     if len(xml) > 1:
