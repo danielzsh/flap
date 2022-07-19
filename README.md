@@ -26,8 +26,10 @@ Used to create a reusable widget:
 ```
 Text in brackets specifies parameters in the form `{type: name}`, and the widget can be used like so:
 ```xml
-<Test src="TestWidget" text="some text" bgcolor="color: blue"/>
+<Link src="TestWidget" />
+...
+<Test text="some text" bgcolor="color: blue"/>
 ```
-Note that any parameter type other than `str` must be specified. If you use the widget multiple times, specifying `src` again is optional.
+Note that any parameter type other than `str` must be specified (e.g. `color: <color>`). 
 
 A note about the `bg` argument: you only need to specify `color: <color>` if you're passing the color as a parameter. If the background color is fixed, you should write `bg: <color>`. (Specifying a type will make flap think you're referencing a variable)
