@@ -1,3 +1,4 @@
+from cgitb import text
 import xml.etree.ElementTree as ET
 import sys
 import re
@@ -100,6 +101,27 @@ f"""Column(
     children: [
 {fchildren}
     ]
+)"""
+
+def processButton(xml):
+    onpressed = None
+    for child in xml:
+        if child.tag == 'Press':
+            if onpressed is not None:
+                raise Exception('cannot have two press attributes in a button')
+            onpressed = textwrap.dedent(child.text).strip()
+    fonpressed = 'null'
+    if onpressed is not None:
+        indented = textwrap.indent(onpressed, '\t')
+        fonpressed = \
+f"""() {{
+{indented}
+}}""".replace('\n', '\n\t')
+    if xml[-1].tag == 'Text':
+        return \
+f"""TextButton(
+    onPressed:  {fonpressed},
+    child: {process_xml(xml[-1])}
 )"""
 
 def processWidget(xml):

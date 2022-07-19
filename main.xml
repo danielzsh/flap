@@ -1,7 +1,9 @@
 <Main title="my app" swatch="grey">
     <link src="Block"/>
+    <link src="button"/>
     <Column>
         <Block text="some text" bgcolor="color: blue"/>
         <Block text="some text" bgcolor="color: green" />
+        <MyButton buttontext="this text is cool"/>
     </Column>
 </Main>

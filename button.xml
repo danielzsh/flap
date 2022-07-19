@@ -1,0 +1,9 @@
+<Widget name="MyButton">
+    <Button>
+        <Press>
+            print('Pressed');
+            print('Check formatting');
+        </Press>
+        <Text>{str: buttontext}</Text>
+    </Button>
+</Widget>
