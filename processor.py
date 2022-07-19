@@ -103,6 +103,19 @@ f"""Column(
     ]
 )"""
 
+def processRow(xml):
+    children = []
+    for child in xml:
+        if child.tag in styleComponents: continue # add support for styles later
+        children.append(process_xml(child))
+    fchildren = textwrap.indent(",\n".join(children), "\t\t")
+    return \
+f"""Row(
+    children: [
+{fchildren}
+    ]
+)"""
+
 def processButton(xml):
     onpressed = None
     for child in xml:
