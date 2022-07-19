@@ -108,4 +108,4 @@ f"""Row(
 )""" # return the string representation
 ```
 
-If you have anymore questions about contribution, let me know by opening an issue.
+If you have any more questions about contribution, let me know by opening an issue.
