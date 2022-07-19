@@ -29,7 +29,11 @@ def getname(str):
 def processMargin(xml):
     res = ""
     res += "margin: "
-    if "all" in xml.attrib:
+    if "left" in xml.attrib or "right" in xml.attrib or "top" in xml.attrib or "bottom" in xml.attrib:
+        res += f"EdgeInsets.only(left: {xml.attrib.get('left') or 0}, right: {xml.attrib.get('right') or 0}, top: {xml.attrib.get('top') or 0}, bottom: {xml.attrib.get('bottom') or 0}"
+    elif "vertical" in xml.attrib or "horizontal" in xml.attrib:
+        res += f"EdgeInsets.symmetric(horizontal: {xml.attrib.get('horizontal') or 0}, vertical: {xml.attrib.get('vertical') or 0})"
+    elif "all" in xml.attrib:
         res += f"EdgeInsets.all({xml.attrib['all']})"
     else:
         raise Exception("margin tag must contain one of the following: 'left', 'right', 'top', 'bottom', 'horizontal', 'vertical', 'all'")
@@ -38,11 +42,24 @@ def processMargin(xml):
 def processPadding(xml):
     res = ""
     res += "padding: "
-    if "all" in xml.attrib:
+    if "left" in xml.attrib or "right" in xml.attrib or "top" in xml.attrib or "bottom" in xml.attrib:
+        res += f"EdgeInsets.only(left: {xml.attrib.get('left') or 0}, right: {xml.attrib.get('right') or 0}, top: {xml.attrib.get('top') or 0}, bottom: {xml.attrib.get('bottom') or 0}"
+    elif "vertical" in xml.attrib or "horizontal" in xml.attrib:
+        res += f"EdgeInsets.symmetric(horizontal: {xml.attrib.get('horizontal') or 0}, vertical: {xml.attrib.get('vertical') or 0})"
+    elif "all" in xml.attrib:
         res += f"EdgeInsets.all({xml.attrib['all']})"
     else:
         raise Exception("padding tag must contain one of the following: 'left', 'right', 'top', 'bottom', 'horizontal', 'vertical', 'all'")
     return res
+
+def processIcon(xml):
+    styles = [""]
+    for style in xml.attrib:
+        if style == "color":
+            styles.append(f"color: Colors.{xml.attrib['color']}")
+        elif style == "size":
+            styles.append(f"size: {xml.attrib['size']}")
+    return f"Icon(Icons.{xml.text}{', '.join(styles)})"
 
 def processText(xml):
     styles = []
@@ -136,7 +153,16 @@ f"""TextButton(
     onPressed:  {fonpressed},
     child: {process_xml(xml[-1])}
 )"""
-
+    if xml[-1].tag == 'Icon':
+        styles = ""
+        if 'size' in xml[-1].attrib:
+            styles += f"iconSize: {xml[-1].attrib['size']},"
+        return \
+f"""IconButton(
+    icon: {process_xml(xml[-1])},
+    onPressed: {fonpressed},
+    {styles}
+)"""
 def processWidget(xml):
     if len(xml) > 1:
         print("Warning: only first child of 'Widget' will be processed.")

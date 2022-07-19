@@ -69,12 +69,17 @@ A simple wrapper that allows you to style its child (the last element). Accepts 
     <Text>{str: buttontext}</Text>
 </Button>
 ```
-The `Press` element sets on `onPressed` for the `Button`: its contents must be written in `dart`. If `Press` is not specified the `Button` will be disabled.
+The `Press` element sets on `onPressed` for the `Button`: its contents must be written in `dart`. If `Press` is not specified the `Button` will be disabled. The `child` tag can be either `Text` or `Icon`.
 ### Text
 ```xml
 <Text size="20" color="white">White text: font size 20</Text>
 ```
 Plain text: accepts `size` and `color` attributes.
+### Icon
+```xml
+<Icon color="red">delete</Icon>
+```
+Pulls an icon from the Flutter `Icons` class.
 ### Row/Column
 ```xml
 <Row>

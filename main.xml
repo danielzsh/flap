@@ -4,6 +4,6 @@
     <Column>
         <Block text="some text" bgcolor="color: blue"/>
         <Block text="some text" bgcolor="color: green" />
-        <MyButton buttontext="this text is cool"/>
+        <MyButton />
     </Column>
 </Main>
