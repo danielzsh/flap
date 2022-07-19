@@ -1,0 +1,7 @@
+<Widget name="Block">
+    <Container bg="{color: bgcolor}" bradius="10">
+        <Margin all="8"/>
+        <Padding all="8"/>
+        <Text>{str: text}</Text>
+    </Container>
+</Widget>

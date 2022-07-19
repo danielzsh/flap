@@ -1,3 +1,7 @@
 <Main title="my app" swatch="grey">
-    <test src="test" text="some text" bgcolor="color: black" textcolor="color: white"/>
+    <link src="Block"/>
+    <Column>
+        <Block text="some text" bgcolor="color: blue"/>
+        <Block text="some text" bgcolor="color: green" />
+    </Column>
 </Main>

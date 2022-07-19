@@ -56,15 +56,21 @@ def processText(xml):
 def processContainer(xml):
     res = ""
     res += "Container(\n"
+    decoration = []
     for style in xml.attrib:
         if style == 'bg':
             bg = getname(xml.attrib['bg']) or f"Colors.{xml.attrib['bg']}"
-            res += f"\tcolor: {bg},\n"
-        if style == 'width':
+            decoration.append(f"\tcolor: {bg},")
+        elif style == 'bradius':
+            decoration.append(f"\tborderRadius: BorderRadius.all(Radius.circular({xml.attrib['bradius']})),")
+        elif style == 'width':
             res += f"\twidth: {xml.attrib['width']},\n"
+        elif style == 'height':
+            res += f"\theight: {xml.attrib['height']},\n"
     for prop in xml[:-1]:
         res += "\t" + process_xml(prop) + ",\n"
-    res += "\tchild: " + process_xml(xml[-1]) + ",\n"
+    if len(decoration) > 0: res += "\t decoration: BoxDecoration(\n" + textwrap.indent("\n".join(decoration), "\t") + "\n\t),\n"
+    res += "\tchild: " + process_xml(xml[-1]).replace("\n", "\n\t") + ",\n"
     res += ")"
     return res
 
@@ -125,7 +131,9 @@ def processMain(xml):
     imports = ""
     processedimports = []
     for child in xml:
-        if 'src' in child.attrib:
+        if child.tag == 'link':
+            if 'src' not in child.attrib:
+                raise Exception("link must have 'src' tag")
             if child.attrib['src'] in processedimports:
                 continue
             parse_file(child.attrib['src'])
