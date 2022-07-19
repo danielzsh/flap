@@ -2,6 +2,6 @@
     <Container bg="{color: bgcolor}" bradius="10">
         <Margin horizontal="4" vertical="8"/>
         <Padding all="8"/>
-        <Text>{str: text}</Text>
+        <Text color="white">{str: text}</Text>
     </Container>
 </Widget>

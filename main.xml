@@ -1,9 +1,18 @@
 <Main title="my app" swatch="grey">
     <link src="Block"/>
     <link src="button"/>
+    <State count="num: 0" content="str: some text"/>
     <Column>
-        <Block text="some text" bgcolor="color: blue"/>
-        <Block text="some text" bgcolor="color: green" />
-        <MyButton />
+        <Block text="$count" bgcolor="color: blue"/>
+        <Block text="$content" bgcolor="color: green" />
+        <Button>
+            <Press>
+                setState(() {
+                    count++;
+                    content += 'a';
+                });
+            </Press>
+            <Text>Click me</Text>
+        </Button>
     </Column>
 </Main>

@@ -191,6 +191,7 @@ def processWidget(xml):
 def processMain(xml):
     imports = ""
     processedimports = []
+    vars = []
     for child in xml:
         if child.tag == 'link':
             if 'src' not in child.attrib:
@@ -200,46 +201,55 @@ def processMain(xml):
             parse_file(child.attrib['src'])
             imports += f"import '{child.attrib['src']}.dart';\n"
             processedimports.append(child.attrib['src'])
-    body = process_xml(xml[-1])
+        elif child.tag == 'State':
+            for k,v in child.attrib.items():
+                print(v)
+                type, val = v.split(':')
+                if type.strip() == 'num':
+                    vars.append(f"int {k.strip()} = {val.strip()};")
+                if type.strip() == 'str':
+                    vars.append(f"String {k.strip()} = '{val.strip()}';")
+    body = process_xml(xml[-1]).replace('\n', '\n\t\t\t')
+    indentedVars = textwrap.indent("\n".join(vars), "\t")
     return imports + \
 f"""
 void main() {{
-  runApp(const MyApp());
+    runApp(const MyApp());
 }}
 
 class MyApp extends StatelessWidget {{
-  const MyApp({{Key? key}}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {{
-    return MaterialApp(
-      title: '{xml.attrib.get('title') or 'Flap app'}',
-      theme: ThemeData(
-        primarySwatch: Colors.{xml.attrib.get('swatch') or 'blue'},
-      ),
-      home: const MyHomePage(title: '{xml.attrib.get('title') or 'Flap app'}'),
-    );
-  }}
+    const MyApp({{Key? key}}) : super(key: key);
+    @override
+    Widget build(BuildContext context) {{
+        return MaterialApp(
+            title: '{xml.attrib.get('title') or 'Flap app'}',
+            theme: ThemeData(
+                primarySwatch: Colors.{xml.attrib.get('swatch') or 'blue'},
+            ),
+            home: const MyHomePage(title: '{xml.attrib.get('title') or 'Flap app'}'),
+        );
+    }}
 }}
 
 class MyHomePage extends StatefulWidget {{
-  const MyHomePage({{Key? key, required this.title}}) : super(key: key);
+    const MyHomePage({{Key? key, required this.title}}) : super(key: key);
 
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
+    final String title;
+    @override
+    State<MyHomePage> createState() => _MyHomePageState();
 }}
 
 class _MyHomePageState extends State<MyHomePage> {{
-  @override
-  Widget build(BuildContext context) {{
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: {body},
-    );
-  }}
+{indentedVars}
+    @override
+    Widget build(BuildContext context) {{
+        return Scaffold(
+            appBar: AppBar(
+                title: Text(widget.title),
+            ),
+            body: {body},
+        );
+    }}
 }}
 """
 

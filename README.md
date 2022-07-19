@@ -77,7 +77,7 @@ The `Press` element sets on `onPressed` for the `Button`: its contents must be w
 Plain text: accepts `size` and `color` attributes.
 ### Icon
 ```xml
-<Icon color="red">delete</Icon>
+<Icon color="red" size="100">delete</Icon>
 ```
 Pulls an icon from the Flutter `Icons` class.
 ### Row/Column
