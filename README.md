@@ -1,5 +1,5 @@
 # Flap
-A minimal compiler from readable XML to Flutter.
+A minimal compiler from readable XML to Flutter. Designed as an easy way to get into Flutter, not as a replacement.
 ## Prerequisites
 1. Flutter installed
 2. Python installed (should come with most OSes)
@@ -34,7 +34,9 @@ Used to create a reusable widget:
     <Center>
         <Container bg="{color: bgcolor}">
             <Padding all="8"/>
-            <Text size="20">{str: text} and more</Text>
+            <Text size="20">
+                {str: text} and more
+            </Text>
         </Container>
     </Center>
 </Widget>
@@ -45,9 +47,44 @@ Text in brackets specifies parameters in the form `{type: name}`, and the widget
 ...
 <Test text="some text" bgcolor="color: blue"/>
 ```
-Note that any parameter type other than `str` must be specified (e.g. `color: <color>`). 
+Parameter names cannot be style names (e.g. `bg`). Note that any parameter type other than `str` must be specified (note `"some text"` vs `"color: blue"`). 
 
 A note about the `bg` argument: you only need to specify `color: <color>` if you're passing the color as a parameter. If the background color is fixed, you should write `bg: <color>`. (Specifying a type will make flap think you're referencing a variable)
+### Container
+```xml
+<Container bg="green">
+    <Margin all="8" />
+    <Padding all="8" />
+    <Text>The last element is always the child.</Text>
+<Container>
+```
+A simple wrapper that allows you to style its child (the last element). Accepts `Margin` and `Padding` elements to add spacing, and the `bg` attribute to set the background color.
+### Button
+```xml
+<Button>
+    <Press>
+        print('Pressed');
+        print('Check formatting');
+    </Press>
+    <Text>{str: buttontext}</Text>
+</Button>
+```
+The `Press` element sets on `onPressed` for the `Button`: its contents must be written in `dart`. If `Press` is not specified the `Button` will be disabled.
+### Text
+```xml
+<Text size="20" color="white">White text: font size 20</Text>
+```
+Plain text: accepts `size` and `color` attributes.
+### Row/Column
+```xml
+<Row>
+    <Text>one</Text>
+    <Text>two</Text>
+    <Text>three</Text>
+</Row>
+```
+Horizontal/vertical container.
+### More examples: check out the `.xml` files in this repo
 ## Contribution
 If you want to contribute to this project, here's a few tips to get you started:
 
