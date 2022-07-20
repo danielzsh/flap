@@ -1,7 +1,15 @@
 <Main title="My App" swatch="grey">
-    <link src="block"/>
+    <link src="block" />
     <link src="stfulbutton" />
     <State count="num: 0" content="str: some text"/>
+    <Navbar>
+        <Icon>search</Icon>
+        <Container>
+            <Padding horizontal="16"/>
+            <Icon>favorite</Icon>
+        </Container>
+        <Icon>more_vert</Icon>
+    </Navbar>
     <Column>
         <Block text="$count" bgcolor="color: blue"/>
         <Block text="$content" bgcolor="color: green" />

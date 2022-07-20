@@ -1,5 +1,3 @@
-from cgitb import text
-from unicodedata import name
 import xml.etree.ElementTree as ET
 import sys
 import re
@@ -245,7 +243,6 @@ class _{xml.attrib['name']}State extends State<{xml.attrib['name']}> {{
 }}"""
 
 def processWidget(xml):
-    stateful = False
     for child in xml:
         if child.tag == 'State':
             return processStateful(xml)
@@ -254,6 +251,7 @@ def processWidget(xml):
 def processMain(xml):
     imports = ""
     vars = []
+    navactions = ""
     for child in xml:
         if child.tag == 'State':
             for k,v in child.attrib.items():
@@ -262,8 +260,13 @@ def processMain(xml):
                     vars.append(f"int {k.strip()} = {val.strip()};")
                 if type.strip() == 'str':
                     vars.append(f"String {k.strip()} = '{val.strip()}';")
+        elif child.tag == 'Navbar':
+            for desc in child:
+                navactions += f"{process_xml(desc)},\n"
     body = process_xml(xml[-1]).replace('\n', '\n\t\t\t')
     indentedVars = textwrap.indent("\n".join(vars), "\t")
+    indentedactions = textwrap.indent(navactions, '\t')
+    appbaractions = textwrap.indent(f"actions: [\n{indentedactions}\n]", "\t\t\t")
     return imports + \
 f"""
 void main() {{
@@ -280,6 +283,7 @@ class MyApp extends StatelessWidget {{
                 primarySwatch: Colors.{xml.attrib.get('swatch') or 'blue'},
             ),
             home: const MyHomePage(title: '{xml.attrib.get('title') or 'Flap app'}'),
+            debugShowCheckedModeBanner: false,
         );
     }}
 }}
@@ -299,6 +303,7 @@ class _MyHomePageState extends State<MyHomePage> {{
         return Scaffold(
             appBar: AppBar(
                 title: Text(widget.title),
+{appbaractions}
             ),
             body: {body},
         );
