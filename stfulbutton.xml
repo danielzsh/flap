@@ -1,5 +1,5 @@
 <Widget name="StfulDemo">
-    <State content="num: 0"/>
+    <State content="num: {initial}"/>
     <Button>
         <Press>
             setState(() {

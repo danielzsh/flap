@@ -23,6 +23,6 @@
             </Press>
             <Icon color="red">delete</Icon>
         </Button>
-        <StfulDemo/>
+        <StfulDemo initial="num: 0"/>
     </Column>
 </Main>

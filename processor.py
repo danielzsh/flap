@@ -143,7 +143,7 @@ def processButton(xml):
             onpressed = textwrap.dedent(child.text).strip()
     fonpressed = 'null'
     if onpressed is not None:
-        indented = textwrap.indent(onpressed, '\t')
+        indented = onpressed.replace('\n', '\n\t')
         fonpressed = \
 f"""() {{
 {indented}
@@ -195,23 +195,49 @@ def processStateful(xml):
             state = child
             break
     vars = []
+    params = []
+    types = []
+    initContent = [] # things that go in initState()
     for k, v in state.attrib.items():
         type, val = v.split(':')
-        if type.strip() == 'num':
-            vars.append(f"int {k.strip()} = {val.strip()};")
+        val = val.strip()
+        type = type.strip()
+        isvar = val[0] == '{' and val[-1] == '}'
+        if type == 'num':
+            if isvar:
+                vars.append(f"int {k.strip()} = 0;")
+                initContent.append(f"{k.strip()} = widget.{val[1:-1]};")
+                params.append(val[1:-1])
+                types.append('int')
+            else: vars.append(f"int {k.strip()} = {val};")
         if type.strip() == 'str':
-            vars.append(f"String {k.strip()} = '{val.strip()}';")
+            if isvar:
+                vars.append(f"String {k.strip()} = '';")
+                initContent.append(f"{k.strip()} = widget.{val[1:-1]};")
+                params.append(val[1:-1])
+                types.append('String')
+            vars.append(f"String {k.strip()} = '{val}';")
     body = process_xml(xml[-1]).replace('\n', '\n\t\t')
     indentedVars = textwrap.indent("\n".join(vars), "\t")
+    paramPass = map(lambda s: f"required this.{s}", params)
+    paramDecl = map(lambda x, y: f"final {x} {y};", types, params)
+    indentedDecl = textwrap.indent("\n".join(paramDecl), "\t")
+    initcontent = textwrap.indent("\n".join(initContent), "\t\t")
     return \
 f"""class {xml.attrib['name']} extends StatefulWidget {{
-    const {xml.attrib['name']}({{Key? key}}) : super(key: key);
+    const {xml.attrib['name']}({{Key? key, {", ".join(paramPass)}}}) : super(key: key);
+{indentedDecl}
     @override
     State<{xml.attrib['name']}> createState() => _{xml.attrib['name']}State();
 }}
 
 class _{xml.attrib['name']}State extends State<{xml.attrib['name']}> {{
 {indentedVars}
+    @override
+    void initState() {{
+{initcontent}
+        super.initState();
+    }}
     @override
     Widget build(BuildContext context) {{
         return {body};
@@ -288,6 +314,8 @@ def process_xml(xml):
                 continue
             if xml.attrib[param].split(':')[0].strip() == 'color':
                 params.append(f"{param}: Colors.{xml.attrib[param].split(':')[1].strip()}")
+            elif xml.attrib[param].split(':')[0].strip() == 'num':
+                params.append(f"{param}: {xml.attrib[param].split(':')[1].strip()}")
             else: params.append(f"{param}: '{xml.attrib[param]}'")
         return f"{xml.tag}({', '.join(params)})"
     return globals()[f"process{xml.tag}"](xml)
