@@ -50,6 +50,22 @@ Text in brackets specifies parameters in the form `{type: name}`, and the widget
 Parameter names cannot be style names (e.g. `bg`). Note that any parameter type other than `str` must be specified (note `"some text"` vs `"color: blue"`). 
 
 A note about the `bg` argument: you only need to specify `color: <color>` if you're passing the color as a parameter. If the background color is fixed, you should write `bg: <color>`. (Specifying a type will make flap think you're referencing a variable)
+### Stateful Widgets
+Widgets are by default stateless, but a `State` can be introduced with the `State` tag (who would've guessed?):
+```xml
+<Widget name="StfulDemo">
+    <State content="num: {initial}"/>
+    <Button>
+        <Press>
+            setState(() {
+                content++;
+            });
+        </Press>
+        <Text>$content</Text>
+    </Button>
+</Widget>
+```
+By specifying `num: {initial}`, we not only set `content` to an integer but also allow an initial value to be passed in in the form a parameter. Note that all parameters **MUST** be passed in through the `State` tag or they will not be processed. We can reference the `content` variable within the `Text` tag by putting a `$` sign before the variable name.
 ### Container
 ```xml
 <Container bg="green">
