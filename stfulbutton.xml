@@ -1,0 +1,11 @@
+<Widget name="StfulDemo">
+    <State content="num: 0"/>
+    <Button>
+        <Press>
+            setState(() {
+                content++;
+            });
+        </Press>
+        <Text>$content</Text>
+    </Button>
+</Widget>

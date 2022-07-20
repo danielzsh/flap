@@ -1,4 +1,5 @@
 from cgitb import text
+from unicodedata import name
 import xml.etree.ElementTree as ET
 import sys
 import re
@@ -163,9 +164,8 @@ f"""IconButton(
     onPressed: {fonpressed},
     {styles}
 )"""
-def processWidget(xml):
-    if len(xml) > 1:
-        print("Warning: only first child of 'Widget' will be processed.")
+
+def processStateless(xml):
     params = getparams(xml)
     formattedparams = [""]
     paramdecls = []
@@ -188,22 +188,49 @@ def processWidget(xml):
     }}
 }}"""
 
+def processStateful(xml):
+    state = None
+    for child in xml:
+        if child.tag == 'State':
+            state = child
+            break
+    vars = []
+    for k, v in state.attrib.items():
+        type, val = v.split(':')
+        if type.strip() == 'num':
+            vars.append(f"int {k.strip()} = {val.strip()};")
+        if type.strip() == 'str':
+            vars.append(f"String {k.strip()} = '{val.strip()}';")
+    body = process_xml(xml[-1]).replace('\n', '\n\t\t')
+    indentedVars = textwrap.indent("\n".join(vars), "\t")
+    return \
+f"""class {xml.attrib['name']} extends StatefulWidget {{
+    const {xml.attrib['name']}({{Key? key}}) : super(key: key);
+    @override
+    State<{xml.attrib['name']}> createState() => _{xml.attrib['name']}State();
+}}
+
+class _{xml.attrib['name']}State extends State<{xml.attrib['name']}> {{
+{indentedVars}
+    @override
+    Widget build(BuildContext context) {{
+        return {body};
+    }}
+}}"""
+
+def processWidget(xml):
+    stateful = False
+    for child in xml:
+        if child.tag == 'State':
+            return processStateful(xml)
+    return processStateless(xml)
+
 def processMain(xml):
     imports = ""
-    processedimports = []
     vars = []
     for child in xml:
-        if child.tag == 'link':
-            if 'src' not in child.attrib:
-                raise Exception("link must have 'src' tag")
-            if child.attrib['src'] in processedimports:
-                continue
-            parse_file(child.attrib['src'])
-            imports += f"import '{child.attrib['src']}.dart';\n"
-            processedimports.append(child.attrib['src'])
-        elif child.tag == 'State':
+        if child.tag == 'State':
             for k,v in child.attrib.items():
-                print(v)
                 type, val = v.split(':')
                 if type.strip() == 'num':
                     vars.append(f"int {k.strip()} = {val.strip()};")
@@ -268,8 +295,15 @@ def process_xml(xml):
 def parse_file(filename):
     tree = ET.parse(f"{filename}.xml")
     root = tree.getroot()
+    imports = ["import 'package:flutter/material.dart';"]
+    for child in root:
+        if child.tag == 'link':
+            if 'src' not in child.attrib:
+                raise Exception("a 'link' element must contain the 'src' tag")
+            parse_file(child.attrib['src'])
+            imports.append(f"import '{child.attrib['src']}.dart';")
     fo = open(f"src/lib/{filename}.dart", "w")
-    fo.write("import 'package:flutter/material.dart';\n")
+    fo.write("\n".join(imports) + "\n")
     fo.write(process_xml(root))
 if len(sys.argv) == 1:
     parse_file("main")

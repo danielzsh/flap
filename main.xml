@@ -1,6 +1,6 @@
-<Main title="my app" swatch="grey">
-    <link src="Block"/>
-    <link src="button"/>
+<Main title="My App" swatch="grey">
+    <link src="block"/>
+    <link src="stfulbutton" />
     <State count="num: 0" content="str: some text"/>
     <Column>
         <Block text="$count" bgcolor="color: blue"/>
@@ -14,5 +14,15 @@
             </Press>
             <Text>Click me</Text>
         </Button>
+        <Button>
+            <Press>
+                setState(() {
+                    count = 0;
+                    content = 'some text';
+                });
+            </Press>
+            <Icon color="red">delete</Icon>
+        </Button>
+        <StfulDemo/>
     </Column>
 </Main>

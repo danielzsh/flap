@@ -1,9 +1,0 @@
-<Widget name="MyButton">
-    <Button>
-        <Press>
-            print('Pressed');
-            print('Check formatting');
-        </Press>
-        <Icon color="red" size="50">delete</Icon>
-    </Button>
-</Widget>
