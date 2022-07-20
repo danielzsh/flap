@@ -42,7 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
 					Block(text: '$count', bgcolor: Colors.blue),
 					Block(text: '$content', bgcolor: Colors.green),
 					TextButton(
-					    onPressed:  () {
+					    onPressed: () {
 						setState(() {
 							    count++;
 							    content += 'a';

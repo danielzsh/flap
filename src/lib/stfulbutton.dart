@@ -16,7 +16,7 @@ class _StfulDemoState extends State<StfulDemo> {
     @override
     Widget build(BuildContext context) {
         return TextButton(
-		    onPressed:  () {
+		    onPressed: () {
 			setState(() {
 				    content++;
 				});

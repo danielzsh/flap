@@ -151,7 +151,7 @@ f"""() {{
     if xml[-1].tag == 'Text':
         return \
 f"""TextButton(
-    onPressed:  {fonpressed},
+    onPressed: {fonpressed},
     child: {process_xml(xml[-1])}
 )"""
     if xml[-1].tag == 'Icon':
