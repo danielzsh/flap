@@ -1,0 +1,6 @@
+<Widget name="Home">
+    <Container>
+        <Padding all="16"/>
+        <Text size="20">Sample Flap app.</Text>
+    </Container>
+</Widget>

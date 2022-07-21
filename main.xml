@@ -1,36 +1,27 @@
 <Main title="My App" swatch="grey">
-    <link src="block" />
-    <link src="stfulbutton" />
-    <State count="num: 0" content="str: some text"/>
+    <link src="stfuldemo" />
+    <link src="home"/>
+    <State page="widget: Home()" />
     <Navbar>
-        <Icon>search</Icon>
+        <Button>
+            <Press>
+                setState(() {
+                        page = Home();
+                });
+            </Press>
+            <Icon>home</Icon>
+        </Button>
         <Container>
-            <Padding horizontal="16"/>
-            <Icon>favorite</Icon>
+            <Margin right="16"/>
+            <Button>
+                <Press>
+                    setState(() {
+                        page = StfulDemo(initial: 0);
+                    });
+                </Press>
+                <Text color="black">Stateful demo</Text>
+            </Button>
         </Container>
-        <Icon>more_vert</Icon>
     </Navbar>
-    <Column>
-        <Block text="$count" bgcolor="color: blue"/>
-        <Block text="$content" bgcolor="color: green" />
-        <Button>
-            <Press>
-                setState(() {
-                    count++;
-                    content += 'a';
-                });
-            </Press>
-            <Text>Click me</Text>
-        </Button>
-        <Button>
-            <Press>
-                setState(() {
-                    count = 0;
-                    content = 'some text';
-                });
-            </Press>
-            <Icon color="red">delete</Icon>
-        </Button>
-        <StfulDemo initial="num: 0"/>
-    </Column>
+    {page}
 </Main>

@@ -29,7 +29,7 @@ def processMargin(xml):
     res = ""
     res += "margin: "
     if "left" in xml.attrib or "right" in xml.attrib or "top" in xml.attrib or "bottom" in xml.attrib:
-        res += f"EdgeInsets.only(left: {xml.attrib.get('left') or 0}, right: {xml.attrib.get('right') or 0}, top: {xml.attrib.get('top') or 0}, bottom: {xml.attrib.get('bottom') or 0}"
+        res += f"EdgeInsets.only(left: {xml.attrib.get('left') or 0}, right: {xml.attrib.get('right') or 0}, top: {xml.attrib.get('top') or 0}, bottom: {xml.attrib.get('bottom') or 0})"
     elif "vertical" in xml.attrib or "horizontal" in xml.attrib:
         res += f"EdgeInsets.symmetric(horizontal: {xml.attrib.get('horizontal') or 0}, vertical: {xml.attrib.get('vertical') or 0})"
     elif "all" in xml.attrib:
@@ -42,7 +42,7 @@ def processPadding(xml):
     res = ""
     res += "padding: "
     if "left" in xml.attrib or "right" in xml.attrib or "top" in xml.attrib or "bottom" in xml.attrib:
-        res += f"EdgeInsets.only(left: {xml.attrib.get('left') or 0}, right: {xml.attrib.get('right') or 0}, top: {xml.attrib.get('top') or 0}, bottom: {xml.attrib.get('bottom') or 0}"
+        res += f"EdgeInsets.only(left: {xml.attrib.get('left') or 0}, right: {xml.attrib.get('right') or 0}, top: {xml.attrib.get('top') or 0}, bottom: {xml.attrib.get('bottom') or 0})"
     elif "vertical" in xml.attrib or "horizontal" in xml.attrib:
         res += f"EdgeInsets.symmetric(horizontal: {xml.attrib.get('horizontal') or 0}, vertical: {xml.attrib.get('vertical') or 0})"
     elif "all" in xml.attrib:
@@ -255,18 +255,23 @@ def processMain(xml):
     for child in xml:
         if child.tag == 'State':
             for k,v in child.attrib.items():
-                type, val = v.split(':')
+                type, val = v.split(':', 1)
                 if type.strip() == 'num':
                     vars.append(f"int {k.strip()} = {val.strip()};")
                 if type.strip() == 'str':
                     vars.append(f"String {k.strip()} = '{val.strip()}';")
+                elif type.strip() == 'widget':
+                    vars.append(f"Widget {k.strip()} = {val.strip()};")
         elif child.tag == 'Navbar':
             for desc in child:
                 navactions += f"{process_xml(desc)},\n"
-    body = process_xml(xml[-1]).replace('\n', '\n\t\t\t')
+    body = ''
+    if len(xml[-1].tail.strip()) > 1 and xml[-1].tail.strip()[0] == '{' and xml[-1].tail.strip()[-1] == '}':
+        body = xml[-1].tail.strip()[1:-1]
+    else: body = process_xml(xml[-1]).replace('\n', '\n\t\t\t')
     indentedVars = textwrap.indent("\n".join(vars), "\t")
     indentedactions = textwrap.indent(navactions, '\t')
-    appbaractions = textwrap.indent(f"actions: [\n{indentedactions}\n]", "\t\t\t")
+    appbaractions = textwrap.indent(f"actions: [\n{indentedactions}\n]", "\t\t\t\t")
     return imports + \
 f"""
 void main() {{

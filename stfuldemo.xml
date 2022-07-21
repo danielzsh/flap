@@ -1,0 +1,26 @@
+<Widget name="StfulDemo">
+    <link src="block"/>
+    <State count="num: {initial}" content="str: some text"/>
+    <Column>
+        <Block text="$count" bgcolor="color: blue" />
+        <Block text="$content" bgcolor="color: green" />
+        <Button>
+            <Press>
+                    setState(() {
+                        count++;
+                        content += 'a';
+                    });
+                </Press>
+            <Text>Click me</Text>
+        </Button>
+        <Button>
+            <Press>
+                    setState(() {
+                        count = 0;
+                        content = 'some text';
+                    });
+                </Press>
+            <Icon color="red">delete</Icon>
+        </Button>
+    </Column>
+</Widget>
