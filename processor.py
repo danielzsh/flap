@@ -4,6 +4,18 @@ import re
 import textwrap
 kwds = ['src']
 styleComponents = ['Padding', 'Margin']
+
+def compilefunction(xml):
+    func = ''
+    for child in xml:
+        if child.tag == 'Change':
+            indentedcontent = textwrap.dedent(child.text.strip()).replace('\n', '\n\t')
+            func += \
+f"""setState(() {{
+    {indentedcontent}
+}});"""
+    return func
+
 def getparams(xml):
     pattern = re.compile('\{([^\{\}]+)\}')
     params = []
@@ -138,10 +150,10 @@ def processButton(xml):
         if child.tag == 'Press':
             if onpressed is not None:
                 raise Exception('cannot have two press attributes in a button')
-            onpressed = textwrap.dedent(child.text).strip()
+            onpressed = compilefunction(child)
     fonpressed = 'null'
     if onpressed is not None:
-        indented = onpressed.replace('\n', '\n\t')
+        indented = textwrap.indent(onpressed, '\t')
         fonpressed = \
 f"""() {{
 {indented}
@@ -155,13 +167,12 @@ f"""TextButton(
     if xml[-1].tag == 'Icon':
         styles = ""
         if 'size' in xml[-1].attrib:
-            styles += f"iconSize: {xml[-1].attrib['size']},"
+            styles += f"\ticonSize: {xml[-1].attrib['size']},\n"
         return \
 f"""IconButton(
     icon: {process_xml(xml[-1])},
     onPressed: {fonpressed},
-    {styles}
-)"""
+{styles})"""
 
 def processStateless(xml):
     params = getparams(xml)

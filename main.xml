@@ -5,9 +5,9 @@
     <Navbar>
         <Button>
             <Press>
-                setState(() {
-                        page = Home();
-                });
+                <Change>
+                    page = Home();
+                </Change>
             </Press>
             <Icon>home</Icon>
         </Button>
@@ -15,9 +15,9 @@
             <Margin right="16"/>
             <Button>
                 <Press>
-                    setState(() {
+                    <Change>
                         page = StfulDemo(initial: 0);
-                    });
+                    </Change>
                 </Press>
                 <Text color="black">Stateful demo</Text>
             </Button>
