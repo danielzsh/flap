@@ -57,15 +57,15 @@ Widgets are by default stateless, but a `State` can be introduced with the `Stat
     <State content="num: {initial}"/>
     <Button>
         <Press>
-            setState(() {
+            <Change>
                 content++;
-            });
+            </Change>
         </Press>
         <Text>$content</Text>
     </Button>
 </Widget>
 ```
-By specifying `num: {initial}`, we not only set `content` to an integer but also allow an initial value to be passed in in the form a parameter. Note that all parameters **MUST** be passed in through the `State` tag or they will not be processed. We can reference the `content` variable within the `Text` tag by putting a `$` sign before the variable name.
+By specifying `num: {initial}`, we not only set `content` to an integer but also allow an initial value to be passed in in the form a parameter. Note that all parameters **MUST** be passed in through the `State` tag or they will not be processed. We can reference the `content` variable within the `Text` tag by putting a `$` sign before the variable name. `setState` can be called with the `Change` tag.
 ### Container
 ```xml
 <Container bg="green">
@@ -75,6 +75,14 @@ By specifying `num: {initial}`, we not only set `content` to an integer but also
 <Container>
 ```
 A simple wrapper that allows you to style its child (the last element). Accepts `Margin` and `Padding` elements to add spacing, and the `bg` attribute to set the background color.
+### Navbar
+```xml
+<Navbar>
+    <Text>Home</Text>
+    <Text>About</Text>
+</Navbar>
+```
+Creates an `appBar` with the specified children.
 ### Button
 ```xml
 <Button>
